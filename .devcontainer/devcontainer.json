@@ -37,7 +37,7 @@
   },
   "forwardPorts": [],
   "runArgs": [
-        "--env-file=.env"
+        // "--env-file=.env"
         // "--network=smartplaylist_network"
     ],
   "postCreateCommand": "echo 'Dev container ready! Run pytest to test or python src/main.py to run the app'",
