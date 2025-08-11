@@ -2,46 +2,35 @@
 .git
 .gitignore
 
-# Python
+# Python cache and compiled files
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# Virtual environments
+# Virtual environments (exclude from Docker build)
 venv/
 env/
 ENV/
 .venv/
 .env
 
-# IDEs
+# Testing artifacts (not needed in container)
+.coverage
+htmlcov/
+.tox/
+.cache
+.pytest_cache/
+.hypothesis/
+
+# IDEs and editors
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# OS files
 .DS_Store
 .DS_Store?
 ._*
@@ -50,19 +39,16 @@ ENV/
 ehthumbs.db
 Thumbs.db
 
-# Testing
-.coverage
-htmlcov/
-.tox/
-.cache
-.pytest_cache/
-.hypothesis/
+# Development files (not needed in production image)
+README.md
+CLAUDE.md
+.env.example
 
-# Documentation
-*.md
-docs/
-
-# Docker
+# Docker files (prevent recursive copying)
 Dockerfile*
 docker-compose*.yml
 compose.yml
+.dockerignore
+
+# Logs
+*.log
