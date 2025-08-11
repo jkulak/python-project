@@ -1,0 +1,47 @@
+FROM python:3.12-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pipenv
+RUN pip install --no-cache-dir pipenv
+
+# Create non-root user
+RUN groupadd --gid 1000 appuser \
+    && useradd --uid 1000 --gid appuser --shell /bin/bash --create-home appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files
+COPY Pipfile Pipfile.lock ./
+
+# Install dependencies in virtual environment
+RUN pipenv install --dev --system --deploy
+
+# Create virtual environment for IDE integration
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN /opt/venv/bin/pip install --no-cache-dir pipenv
+RUN cd /app && /opt/venv/bin/pipenv install --dev --system
+
+# Set up Python environment
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/src
+
+# Change ownership of app directory
+RUN chown -R appuser:appuser /app /opt/venv
+
+# Switch to non-root user
+USER appuser
+
+# Set working directory
+WORKDIR /app
+
+# Default command (overridden by devcontainer)
+CMD ["/bin/bash"]

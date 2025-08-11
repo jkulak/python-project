@@ -8,6 +8,7 @@ python-dotenv = "*"
 
 [dev-packages]
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.12"

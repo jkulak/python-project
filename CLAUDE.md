@@ -32,6 +32,11 @@ This is a modern Python project using pipenv for dependency management and pytes
 - `pipenv run pytest tests/test_main.py` - Run specific test file
 - `pytest tests/` - Run all tests in tests directory (when in pipenv shell)
 
+### Code Quality
+- Linting and formatting handled by ruff VS Code extension (charliermarsh.ruff)
+- Configured to format on save and fix issues automatically
+- Import sorting and code fixes applied on save
+
 ### Running the Application
 - `pipenv run python src/main.py` - Run the main application
 - `python src/main.py` - Run main application (when in pipenv shell)

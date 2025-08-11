@@ -15,7 +15,55 @@ This project demonstrates a simple Python application with:
 
 ## Quick Start
 
-### Using Docker (Recommended)
+### Using Dev Containers (Recommended for VSCode)
+
+**Dev Containers provide the fastest and most consistent development experience with zero local setup required.**
+
+1. **Prerequisites**:
+   - Install [VSCode](https://code.visualstudio.com/)
+   - Install [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   - Install [Docker](https://www.docker.com/get-started)
+
+2. **Open in Dev Container**:
+   - Clone and open the project in VSCode
+   - VSCode will detect the `.devcontainer/` configuration automatically
+   - Click "Reopen in Container" when prompted, or press `Ctrl/Cmd + Shift + P` and run "Dev Containers: Reopen in Container"
+   - VSCode will build the development container (first time may take 2-3 minutes)
+
+3. **Development inside the container**:
+   ```bash
+   # Run the application
+   python src/main.py
+   
+   # Run tests with coverage
+   pytest -v --cov=src
+   
+   # Run tests with detailed output
+   pytest tests/ -v
+   
+   # Install new dependencies (updates Pipfile automatically)
+   pipenv install <package>
+   pipenv install --dev <dev-package>
+   ```
+
+**The dev container includes**:
+- **Python 3.12** with pipenv and all dependencies pre-installed
+- **Automatic VSCode extensions**: Python, Ruff (linting/formatting), Docker, Jupyter, Testing
+- **Pre-configured Python interpreter** at `/opt/venv/bin/python`
+- **Automatic code formatting** on save with Ruff
+- **Test discovery** pre-configured for pytest in `tests/` directory
+- **Live file synchronization** - changes in VSCode sync instantly to the container
+- **Non-root user** (`appuser`) for security
+- **Proper PYTHONPATH** configuration for clean imports
+
+**Key Benefits**:
+- ✅ **Zero local Python setup** - everything runs in the container
+- ✅ **Consistent environment** - same Python version and dependencies for everyone
+- ✅ **Instant productivity** - extensions and settings pre-configured
+- ✅ **Isolated development** - no conflicts with local Python installations
+- ✅ **Easy dependency management** - pipenv commands work seamlessly
+
+### Using Docker (Alternative)
 
 1. **Run the application**:
    ```bash
@@ -216,9 +264,15 @@ This project implements several Docker best practices:
 
 ## Requirements
 
-- **Docker & Docker Compose**: For containerized development
+### 🚀 Dev Containers (Recommended - Zero Local Setup)
+- **VSCode**: Latest version with Dev Containers extension
+- **Docker Desktop**: For running containers
+- **That's it!** No local Python, pipenv, or dependencies needed
+
+### Alternative Development Methods
+- **Docker & Docker Compose**: For containerized development without VSCode
 - **Python 3.12+**: For local development
-- **pipenv**: For dependency management (local development)
+- **pipenv**: For dependency management (local development only)
 
 ## Contributing
 
