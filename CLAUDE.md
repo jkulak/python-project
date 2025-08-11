@@ -2,86 +2,104 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Main rules for Claude Code
+Important: There is only docker intalled locally on this host. Always use Docker to run tests, install dependecies and manage the development environment.
+Important: Always follow TDD (Test Driven Development). Before implementing functionality, always write tests.
 
-This is a modern Python project using pipenv for dependency management and pytest for testing. The project contains a simple greeting function with corresponding tests. It's fully containerized with Docker using multi-stage builds for optimization.
+1. **Understand the Code**: Analyze the code structure, dependencies, and functionality before making changes.
+2. **Follow Project Conventions**: Adhere to existing coding styles, naming conventions, and project structure.
+3. **Use Existing Tools**: Leverage existing tools for linting, formatting, and testing to maintain code quality.
+4. **Document Changes**: Update documentation and comments to reflect any changes made to the codebase.
+5. **Seek Feedback**: Encourage code reviews and discussions to improve code quality and share knowledge.
+6. **Follow Best Practices**: Adhere to established best practices for coding, testing, and documentation including 12-factor app principles.
+7. **Test Driven Development**: Write tests before implementing new features or fixing bugs to ensure code quality and functionality.
 
-## Development Setup
+## Commands
 
-### Local Development (with pipenv)
-1. Install pipenv if not already installed: `pip install pipenv`
-2. Install dependencies: `pipenv install --dev`
-3. Activate virtual environment: `pipenv shell`
+### Development Environment
+The project supports three development environments:
 
-### Docker Development
-1. Build the Docker image: `docker build -t python-project .`
-2. Run with Docker Compose: `docker compose up`
+**Dev Container (Recommended)**:
+- VS Code automatically detects `.devcontainer/devcontainer.json`
+- Pre-configured with Python 3.12, Ruff formatter/linter, and pytest
+- Uses `/opt/venv/bin/python` as interpreter
 
-## Common Development Commands
+**Docker Compose**:
+```bash
+# Run application
+docker compose up
 
-### Dependency Management
-- `pipenv install <package>` - Install a runtime dependency
-- `pipenv install --dev <package>` - Install a development dependency
-- `pipenv install` - Install all dependencies from Pipfile
-- `pipenv shell` - Activate the virtual environment
-- `pipenv run <command>` - Run a command within the virtual environment
+# Run tests  
+docker compose --profile testing up
+
+# Interactive development shell
+docker compose --profile development up -d
+docker exec -it python-project-dev bash
+```
+
+**Local Development**:
+```bash
+pipenv install --dev
+pipenv shell
+```
 
 ### Testing
-- `pipenv run pytest` - Run all tests
-- `pipenv run pytest -v` - Run tests with verbose output
-- `pipenv run pytest tests/test_main.py` - Run specific test file
-- `pytest tests/` - Run all tests in tests directory (when in pipenv shell)
+```bash
+# In dev container or local environment
+pytest -v --cov=src
 
-### Code Quality
-- Linting and formatting handled by ruff VS Code extension (charliermarsh.ruff)
-- Configured to format on save and fix issues automatically
-- Import sorting and code fixes applied on save
+# Run specific test file
+pytest tests/test_main.py -v
+
+# With Docker
+docker compose --profile testing up
+```
+
+### Linting/Formatting
+- Ruff is configured in dev container for auto-format on save
+- Manual formatting: Use Ruff extension in VS Code or run `ruff format .`
+- No separate lint command configured - relies on Ruff extension
 
 ### Running the Application
-- `pipenv run python src/main.py` - Run the main application
-- `python src/main.py` - Run main application (when in pipenv shell)
+```bash
+# In dev container or local
+python src/main.py
 
-### Docker Commands
-- `docker build -t python-project .` - Build the Docker image
-- `docker run python-project` - Run the application in a container
-- `docker compose up` - Run the application using Docker Compose
-- `docker compose --profile testing up` - Run tests in a container
-- `docker compose --profile development up` - Start interactive development container
-- `docker compose down` - Stop and remove containers
-
-## Project Structure
-
-- `src/` - Source code directory
-  - `main.py` - Main application code with hello() function
-  - `__init__.py` - Package initialization
-- `tests/` - Test files directory
-  - `test_main.py` - Test file for main.py functions
-  - `__init__.py` - Package initialization
-- `Pipfile` - Pipenv dependency specification
-- `pytest.ini` - Pytest configuration (configured for tests/ directory)
-- `Dockerfile` - Multi-stage Docker build configuration
-- `compose.yml` - Docker Compose configuration with profiles
-- `.dockerignore` - Files excluded from Docker build context
-- `README.md` - Project documentation
+# With Docker
+docker compose up
+```
 
 ## Architecture
 
-Organized Python project with separate source and test directories:
-- **Source code**: Located in `src/` directory for clean organization
-- **Tests**: Located in `tests/` directory with PYTHONPATH configured for imports  
-- `hello()` function in src/main.py that prints a greeting
-- Test coverage using pytest with capsys fixture for output testing
-- Modern Python development workflow using pipenv for dependency isolation
-- Containerized with Docker using multi-stage builds for optimization
-- Non-root user execution for security
-- Health checks for container monitoring
-- **Scalable structure**: Ready for dozens of source files and test files
+### Project Structure
+```
+src/                 # All source code
+├── __init__.py     
+└── main.py          # Entry point with hello() function
 
-## Docker Best Practices Implemented
+tests/               # All test files  
+├── __init__.py
+└── test_main.py     # Tests for main.py
+```
 
-- **Multi-stage builds**: Separate builder and runtime stages for smaller final image
-- **Layer caching**: Dependencies installed before code copy for better cache utilization
-- **Security**: Non-root user execution (uid 1000)
-- **Optimization**: Minimal slim base image, .dockerignore to exclude unnecessary files
-- **Development workflow**: Compose profiles for different environments (app, test, dev)
-- **Environment variables**: Proper Python settings (PYTHONDONTWRITEBYTECODE, PYTHONUNBUFFERED)
+### Key Components
+- **main.py**: Contains `hello()` function that prints greeting from environment variable or `.env` file
+- **Environment Configuration**: Uses `python-dotenv` to load `.env` files, falls back to `GREETING_MESSAGE` env var or default "Hello, World!"
+- **Testing**: Comprehensive pytest suite with mocking for environment variables and dotenv loading
+- **Docker Multi-stage**: Optimized production builds with non-root user (uid 1000)
+
+### Import Structure
+- Tests use `sys.path` manipulation to import from `src/` directory
+- Dev container sets `PYTHONPATH=/app/src` for clean imports
+- Production Docker sets proper Python path in health check
+
+### Dependencies
+- **Runtime**: `python-dotenv` for environment variable management
+- **Development**: `pytest`, `pytest-cov` for testing and coverage
+- **Python Version**: 3.12 (enforced in Pipfile and Dockerfiles)
+
+## Development Notes
+- All environments use non-root user (appuser/uid 1000) for security
+- Tests mock `load_dotenv()` to avoid side effects
+- Docker volumes mount source code read-only in production profile
+- Dev container includes Ruff, Copilot, and Python extensions pre-configured

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose run:*)",
+      "Bash(docker compose build:*)",
+      "Bash(docker run:*)",
+      "Bash(docker compose:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(docker build:*)",
+      "Bash(code:*)"
+    ],
+    "deny": []
+  }
+}
