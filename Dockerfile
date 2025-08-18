@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for Python project with pipenv
 
 # Builder stage - install dependencies
-FROM python:3.12-slim AS builder
+FROM python:3.13.7-slim AS builder
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -26,7 +26,7 @@ COPY Pipfile Pipfile.lock* ./
 RUN pipenv install --deploy --dev
 
 # Runtime stage - minimal image
-FROM python:3.12-slim AS runtime
+FROM python:3.13.7-slim AS runtime
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
